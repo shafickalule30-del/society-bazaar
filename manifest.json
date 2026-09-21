@@ -1,0 +1,20 @@
+{
+  "name": "Society Bazaar",
+  "short_name": "Bazaar",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#075E54",
+  "theme_color": "#075E54",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/075E54/ffffff?text=SB",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/075E54/ffffff?text=SB",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
