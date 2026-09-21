@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading… · Society Bazaar</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <h1>🏘️ Society Bazaar</h1>
+    <a href="index.html" style="color:white;font-size:13px;text-decoration:underline;">← Back to all products</a>
+  </header>
+
+  <main id="post-container" class="feed">
+    <div class="loading">Loading product…</div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const postId = params.get("id");
+    const container = document.getElementById("post-container");
+
+    async function loadPost() {
+      if (!postId) {
+        container.innerHTML = `<div class="empty">No product specified.</div>`;
+        return;
+      }
+      const { data, error } = await supabaseClient
+        .from("posts").select("*").eq("id", postId).single();
+
+      if (error || !data) {
+        container.innerHTML = `<div class="empty">Product not found.</div>`;
+        return;
+      }
+      document.title = data.title + " · Society Bazaar";
+
+      const waNumber = (data.whatsapp || "").replace(/[^0-9]/g, "");
+      const waMessage = encodeURIComponent(`Hi ${data.seller}, I saw your listing "${data.title}" on Society Bazaar. I'd like to order.`);
+      const waLink = waNumber ? `https://wa.me/${waNumber}?text=${waMessage}` : "#";
+
+      container.innerHTML = `
+        <article class="card">
+          ${data.image_url
+            ? `<img class="card-image" src="${data.image_url}" alt="">`
+            : `<div class="card-image-placeholder">🛒</div>`}
+          <div class="card-body">
+            <div class="card-title">${data.title}</div>
+            <div class="card-price">${data.price}</div>
+            <div class="card-seller">By ${data.seller}</div>
+            ${data.description ? `<div class="card-desc">${data.description}</div>` : ""}
+            <a class="card-btn" href="${waLink}" target="_blank">Order on WhatsApp</a>
+          </div>
+        </article>
+      `;
+    }
+    loadPost();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+<body>
+  
+</body>
+
+</html>
