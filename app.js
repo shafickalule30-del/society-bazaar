@@ -89,12 +89,14 @@ async function enableNotifications() {
     }
 
     const { error } = await supabaseClient
-      .from("subscribers")
-      .insert([{ fcm_token: token }]);
+  .from("subscribers")
+  .insert([{ fcm_token: token }]);
 
-    if (error) {
-      console.error("Save subscriber error:", error);
-    }
+if (error) {
+  console.error("Save subscriber error:", error);
+  alert("Token was generated but failed to save: " + error.message);
+  return;
+        }
 
     document.getElementById("notify-banner").style.display = "none";
     alert("✅ Notifications enabled! You'll get alerts for new products.");
