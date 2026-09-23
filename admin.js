@@ -2,6 +2,7 @@
 const CLOUDINARY_CLOUD_NAME = "iv2cmmrt";
 const CLOUDINARY_UPLOAD_PRESET = "society_bazaar";
 // admin.js — Admin panel logic
+const ADMIN_KEY = "shafic256";  // ← MUST match the Vercel env var
 
 document.getElementById("post-form").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -53,8 +54,36 @@ document.getElementById("post-form").addEventListener("submit", async (e) => {
     }
 
     // Success!
-    showStatus("✅ Posted! Residents will see it in the feed.", "success");
-    document.getElementById("post-form").reset();
+const newPost = data[0]; // the row Supabase just returned
+showStatus("✅ Posted! Sending notifications…", "success");
+document.getElementById("post-form").reset();
+
+// Trigger push notification
+try {
+  const notifyRes = await fetch("/api/notify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-key": ADMIN_KEY
+    },
+    body: JSON.stringify({
+      post_id: newPost.id,
+      title: `🛒 ${newPost.title} — ${newPost.price}`,
+      body: `By ${newPost.seller}. Tap to view.`
+    })
+  });
+
+  const notifyData = await notifyRes.json();
+
+  if (notifyRes.ok) {
+    showStatus(`✅ Posted! Notified ${notifyData.sent} residents.`, "success");
+  } else {
+    showStatus(`✅ Posted, but notification failed: ${notifyData.error}`, "error");
+  }
+} catch (err) {
+  console.error("Notify call failed:", err);
+  showStatus("✅ Posted, but notifications could not be sent.", "error");
+                                        }
 
     // In Batch C, we'll also trigger a push notification here.
 
